@@ -24,6 +24,3 @@ yarn-error.log*
 
 # logs
 debug.log
-
-# config app data
-Config.js
