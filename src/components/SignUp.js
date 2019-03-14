@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
+import config from '../config/Config';
 
 class SignUp extends Component {
     constructor(props){
         super(props);
         this.state = {
-            username: "",
-            password: "",
-            firstName: "",
-            lastName: ""
+            userData: {
+                username: "",
+                password: "",
+                firstName: "",
+                lastName: ""
+            }
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -19,18 +23,41 @@ class SignUp extends Component {
         let name = target.name;
         let value = target.value;
 
-        this.setState({
-            [name]: value
-        });
+        this.setState((prevState) => {
+            let newUserData = prevState.userData;
+            newUserData[name] = value;
+            return {userData: newUserData};
+        })
     }
 
     handleSubmit(event) {
-        console.log(this.state);
+        this.signUp();
         event.preventDefault();
     }
 
+    signUp() {
+        let encodedAuth = window.btoa(`${config.kinveyAppKey}:${config.kinveyAppSecret}`);
+        console.log(this.state.userData);
+        let data = JSON.stringify(this.state.userData);
+        console.log(data);
+        fetch(`https://baas.kinvey.com/user/${config.kinveyAppKey}/`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Basic ${encodedAuth}`,
+                'Content-Type': 'application/json'
+            },
+            body: data
+        }).then((res) => {
+            console.log(res);
+            res.json().then((resJSON) => {
+                console.log(resJSON);
+            })
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
     render () {
-        console.log(this.state);
         return (
             <div className="container">
                 <h1>Sign Up</h1>
