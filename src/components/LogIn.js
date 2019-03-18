@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import config from '../config/Config';
 
-class SignUp extends Component {
+class LogIn extends Component {
     constructor(props){
         super(props);
         this.state = {
             userData: {
                 username: "",
-                password: "",
-                firstName: "",
-                lastName: ""
+                password: ""
             }
         };
 
@@ -30,14 +28,14 @@ class SignUp extends Component {
     }
 
     handleSubmit(event) {
-        this.signUp();
+        this.logIn();
         event.preventDefault();
     }
 
-    signUp() {
+    logIn() {
         let encodedAuth = window.btoa(`${config.kinveyAppKey}:${config.kinveyAppSecret}`);
         let data = JSON.stringify(this.state.userData);
-        fetch(`https://baas.kinvey.com/user/${config.kinveyAppKey}/`, {
+        fetch(`https://baas.kinvey.com/user/${config.kinveyAppKey}/login`, {
             method: 'POST',
             headers: {
                 'Authorization': `Basic ${encodedAuth}`,
@@ -58,7 +56,7 @@ class SignUp extends Component {
     render () {
         return (
             <div className="container">
-                <h1>Sign Up</h1>
+                <h1>Log In</h1>
                 <br/>
                 <form onSubmit={this.handleSubmit}>
                     <fieldset>
@@ -74,18 +72,6 @@ class SignUp extends Component {
                                 <input type="password" className="form-control-lg" name="password" placeholder="Enter password" value={this.state.password} onChange={this.handleInputChange}/>
                             </label>
                         </div>
-                        <div className="form-group">
-                            <label>
-                                <h5>First Name</h5>
-                                <input type="text" className="form-control-lg" name="firstName" placeholder="Enter your first name" value={this.state.firstName} onChange={this.handleInputChange}/>
-                            </label>
-                        </div>
-                        <div className="form-group">
-                            <label>
-                                <h5>Last Name</h5>
-                                <input type="text" className="form-control-lg" name="lastName" placeholder="Enter your last name" value={this.state.lastName} onChange={this.handleInputChange}/>
-                            </label>
-                        </div>
                         <button type="submit" className="btn btn-primary">Submit</button>
                     </fieldset>
                 </form>
@@ -94,4 +80,4 @@ class SignUp extends Component {
     }
 }
 
-export default SignUp;
+export default LogIn;

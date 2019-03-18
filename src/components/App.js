@@ -3,6 +3,7 @@ import '../styles/bootstrap.min.css';
 import { Route, Link } from 'react-router-dom';
 import config from '../config/Config';
 import SignUp from './SignUp';
+import LogIn from './LogIn';
 
 class App extends Component {
   constructor(props){
@@ -70,10 +71,11 @@ class App extends Component {
           <Link className="navbar-brand" to="/">CMR-App. Welcome!</Link>
           <div className="my-2 my-sm-0">
             <Link className="btn btn-secondary my-2 my-sm-0" to="/signup">Sign Up</Link>
-            <Link className="btn btn-secondary my-2 my-sm-0" to="/signin">Log In</Link>
+            <Link className="btn btn-secondary my-2 my-sm-0" to="/login">Log In</Link>
           </div>
         </nav>
         <Route path="/signup" component={SignUp}/>
+        <Route path="/login" component={LogIn}/>
       </div>
     );
   }
