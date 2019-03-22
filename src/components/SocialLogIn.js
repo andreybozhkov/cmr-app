@@ -19,6 +19,10 @@ class SocialLogIn extends Component {
 
         this.handleSignUpAuth = this.handleSignUpAuth.bind(this);
         this.handleSignUpToken = this.handleSignUpToken.bind(this);
+        this.handleImplicitToken = this.handleImplicitToken.bind(this);
+        this.testGraphCall = this.testGraphCall.bind(this);
+        this.testSendEmail = this.testSendEmail.bind(this);
+        this.logout = this.logout.bind(this);
     }
 
     handleInputChange(event) {
@@ -80,20 +84,63 @@ class SocialLogIn extends Component {
             console.log(err);
         });
 
-        fetch(`https://login.microsoftonline.com/b01aab02-d012-43b9-98de-902903e53920/oauth2/v2.0/token`,{
+        event.preventDefault();
+    }
+
+    handleImplicitToken() {
+        window.open('https://login.microsoftonline.com/b01aab02-d012-43b9-98de-902903e53920/oauth2/v2.0/authorize?client_id=55647bde-885a-40bc-8744-e9d7630d9302&scope=openid%20profile%20email%20User.Read%20Mail.ReadWrite%20Mail.Send&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fsocial-login&response_type=token', '_self');
+    }
+
+    testGraphCall() {
+        let access_token = sessionStorage.getItem('access_token_graph');
+        fetch(`https://graph.microsoft.com/v1.0/me`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${access_token}`
+            }
+        }).then(res => {
+            res.json().then((resJSON) => {
+                this.setState({ microsoftEmail: resJSON.mail });
+            }).catch(err => console.log(err));
+        }).catch(err => console.log(err));
+    }
+
+    testSendEmail() {
+        fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Authorization': sessionStorage.getItem('access_token_graph'),
+                'Content-Type': 'application/json'
             },
-            body: ``
-        }).then((res) => {
-            console.log(res);
-            res.json().then((resJSON) => {
-                console.log(resJSON);
-            }).catch((err) => console.log(err));
-        }).catch((err) => console.log(err));
+            body: JSON.stringify({
+                'message': {
+                    'subject': 'Test E-mail from my SPA',
+                    'body': {
+                        'contentType': 'HTML',
+                        'content': '<b>HTML</b> body works!'
+                    },
+                    'toRecipients': [
+                        {
+                            'emailAddress': {
+                                'address': this.state.microsoftEmail
+                            }
+                        }
+                    ]
+                }
+            })
+        }).then((res) => console.log(res)).catch((err) => console.log(err));
+    }
 
-        event.preventDefault();
+    logout() {
+        fetch(`https://baas.kinvey.com/user/${config.kinveyAppKey}/_logout`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
+            }
+        }).then(() => {
+            sessionStorage.removeItem('authtoken');
+            this.props.history.push("/");
+        }).catch(err => console.log(err));
     }
 
     componentDidMount() {
@@ -105,6 +152,10 @@ class SocialLogIn extends Component {
         let codeQuery = parsedUrl.searchParams.get('code');
         if (codeQuery != null && this.state.codeQuery.length === 0) {
             this.setState({ codeQuery: codeQuery });
+        }
+        let access_token = parsedUrl.hash.slice(parsedUrl.hash.indexOf("=") + 1, parsedUrl.hash.indexOf("&"));
+        if (access_token != null) {
+            sessionStorage.setItem('access_token_graph', access_token);
         }
 
         if (this.state.userData.firstName.length === 0 && this.state.userData.lastName.length === 0) {
@@ -125,20 +176,6 @@ class SocialLogIn extends Component {
                 });
             }).catch(err => console.log(err));
         }
-
-        /*if (this.state.microsoftEmail === null && sessionStorage.getItem('access_token_kinvey')) {
-            //let encodedAccessToken = window.btoa(sessionStorage.getItem('access_token_kinvey'));
-            fetch(`https://graph.microsoft.com/v1.0/me`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('access_token_kinvey')}`
-                }
-            }).then(res => {
-                res.json().then((resJSON) => {
-                    console.log(resJSON);
-                }).catch(err => console.log(err));
-            }).catch(err => console.log(err));
-        }*/
     }
 
     render () {
@@ -147,11 +184,21 @@ class SocialLogIn extends Component {
                 <h1>Social Log In - Log In With Your Microsoft 365 Account</h1>
                 <br/>
                 <h4>Hi {this.state.userData.firstName} {this.state.userData.lastName}</h4>
-                <button className="btn btn-primary" onClick={this.handleSignUpAuth}>Social Log In</button>
-                <br/>
                 {this.state.microsoftEmail !== null &&
                     <h5>Your Microsoft 365 e-mail is: {this.state.microsoftEmail}</h5>
                 }
+                {sessionStorage.getItem('authtoken') &&
+                    <button className="btn btn-primary" onClick={this.logout}>Log Out</button>
+                }
+                <button className="btn btn-primary" onClick={this.handleSignUpAuth}>Social Log In</button>
+                <button className="btn btn-primary" onClick={this.handleImplicitToken}>Implicit Log In</button>
+                {sessionStorage.getItem('access_token_graph') &&
+                    <button className="btn btn-primary" onClick={this.testGraphCall}>Test Graph Call</button>
+                }
+                {this.state.microsoftEmail &&
+                    <button className="btn btn-primary" onClick={this.testSendEmail}>Test Send Email</button>
+                }
+                <br/>
                 {this.state.codeQuery.length > 0 &&
                     <form onSubmit={this.handleSignUpToken}>
                         <fieldset>
