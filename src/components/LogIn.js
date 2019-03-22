@@ -45,6 +45,7 @@ class LogIn extends Component {
         }).then((res) => {
             res.json().then((resJSON) => {
                 sessionStorage.setItem("authtoken", resJSON._kmd.authtoken);
+                sessionStorage.setItem("userId", resJSON._id);
                 this.props.history.push("/");
             })
         }).catch((err) => {
