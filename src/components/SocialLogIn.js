@@ -138,7 +138,7 @@ class SocialLogIn extends Component {
                 'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
             }
         }).then(() => {
-            sessionStorage.removeItem('authtoken');
+            sessionStorage.clear();
             this.props.history.push("/");
         }).catch(err => console.log(err));
     }
@@ -156,25 +156,6 @@ class SocialLogIn extends Component {
         let access_token = parsedUrl.hash.slice(parsedUrl.hash.indexOf("=") + 1, parsedUrl.hash.indexOf("&"));
         if (access_token != null) {
             sessionStorage.setItem('access_token_graph', access_token);
-        }
-
-        if (this.state.userData.firstName.length === 0 && this.state.userData.lastName.length === 0) {
-            fetch(`https://baas.kinvey.com/user/${config.kinveyAppKey}/_me`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
-                }
-            }).then((res) => {
-                res.json().then((resJSON) => {
-                    this.setState({
-                        userData: {
-                            username: resJSON.username,
-                            firstName: resJSON.firstName,
-                            lastName: resJSON.lastName
-                        }
-                    })
-                });
-            }).catch(err => console.log(err));
         }
     }
 
