@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import config from '../config/Config';
+import config from '../../config/Config';
 
 class SignUp extends Component {
     constructor(props){
@@ -47,7 +47,7 @@ class SignUp extends Component {
         }).then((res) => {
             res.json().then((resJSON) => {
                 sessionStorage.setItem("authtoken", resJSON._kmd.authtoken);
-                this.props.history.push("/");
+                this.props.history.push("/shipments");
             })
         }).catch((err) => {
             console.log(err);

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import config from '../config/Config';
+import config from '../../config/Config';
 
 class Navbar extends Component {
     constructor(props) {
@@ -61,6 +61,7 @@ class Navbar extends Component {
             {sessionStorage.getItem('authtoken') &&
                 <div className="my-2 my-sm-0">
                     <h4>Hello, {this.state.userData.firstName}</h4>
+                    <Link className="btn btn-secondary my-2 my-sm-0" to="/shipments">Shipments</Link>
                     <button className="btn btn-secondary my-2 my-sm-0" onClick={this.logout}>Log Out</button>
                 </div>
             }
