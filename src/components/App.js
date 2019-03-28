@@ -10,10 +10,42 @@ import PrivateRoute from './common/PrivateRoute';
 import auth from '../utils/auth';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      userData: {
+        firstName: ''
+      }
+    };
+
+    this.getLoggedInUser = this.getLoggedInUser.bind(this);
+  }
+
+  getLoggedInUser() {
+    fetch(`https://baas.kinvey.com/user/${config.kinveyAppKey}/_me`, {
+      method: 'GET',
+      headers: {
+      'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
+      }
+    }).then((res) => {
+        res.json().then((resJSON) => {
+          this.setState({
+            userData: {
+              firstName: resJSON.firstName
+            }
+          });
+        }).catch(err => console.log(err));
+    }).catch(err => console.log(err));   
+  }
+
   render() {
+    if (sessionStorage.getItem('authtoken') && this.state.userData.firstName.length === 0) {
+      this.getLoggedInUser();
+    }
+
     return (
       <div>
-        <Navbar />
+        <Navbar firstName={this.state.userData.firstName} />
         {!auth.isLoggedIn() &&
           <h1 className="text-center">
             Welcome to the CMR App!
