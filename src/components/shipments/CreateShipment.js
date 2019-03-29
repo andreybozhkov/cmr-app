@@ -12,21 +12,21 @@ export default class CreateShipment extends Component {
                 trailer: '',
                 'loading-address': '',
                 'unloading-address': '',
-                'delivery-date': null,
+                'delivery-date': '',
                 'project-id': 1,
                 'shipment-id': 1,
+                _id: '',
                 'invoice-nr': 1,
                 'invoice-amount': 0,
                 'invoice-currency': 'EUR',
                 'project-resp': '',
-                'requested-date': null,
+                'requested-date': '',
                 status: 'Need Documents',
-                'documents-needed': ['CMR'],
-                'received-date': null,
-                'resp-person': this.props.firstName,
+                'documents-needed': [],
+                'received-date': '',
                 'notes-internal': '',
-                'reminder-date': null,
-                'invoice-nr-missing-CMR': null
+                'reminder-date': '',
+                'invoice-nr-missing-CMR': ''
             }
         }
 
@@ -37,13 +37,32 @@ export default class CreateShipment extends Component {
     handleInputChange(event) {
         let target = event.target;
         let name = target.name;
-        let value = target.value;
 
-        this.setState((prevState) => {
-            let newShipmentData = prevState.shipmentData;
-            newShipmentData[name] = value;
-            return {shipmentData: newShipmentData};
-        })
+        if (target.options && name==='documents-needed') {
+            let options = target.options;
+            let selectedValues = [];
+            for (let option of options) {
+                if (option.selected) {
+                    selectedValues.push(option.value);
+                }
+            }
+
+            this.setState((prevState) => {
+                let newShipmentData = prevState.shipmentData;
+                newShipmentData[name].splice(0, newShipmentData[name].length, ...selectedValues);
+                return {shipmentData: newShipmentData};
+            })
+        } else {
+            let value = target.value;
+            this.setState((prevState) => {
+                let newShipmentData = prevState.shipmentData;
+                newShipmentData[name] = value;
+                if(name === 'shipment-id') {
+                    newShipmentData._id = value;
+                }
+                return {shipmentData: newShipmentData};
+            })
+        }
     }
 
     handleSubmit(event) {
@@ -52,7 +71,20 @@ export default class CreateShipment extends Component {
     }
 
     createShipment() {
-        console.log(this.state.shipmentData);
+        fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/shipments`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.state.shipmentData)
+        }).then((res) => {
+            console.log(res);
+            res.json().then((resJSON) => {
+                console.log(resJSON);
+                this.props.history.push("/shipments");
+            }).catch((err) => console.log(err));
+        }).catch((err) => console.log(err));
     }
 
     render() {
@@ -64,68 +96,68 @@ export default class CreateShipment extends Component {
                     <fieldset>
                         <div className="form-group">
                             <label>
-                                <h5>Customer</h5>
-                                <input type="text" className="form-control-lg" name="customer" placeholder="Enter customer company name" value={this.state.shipmentData.customer} onChange={this.handleInputChange} required />
+                                <h6>Customer</h6>
+                                <input type="text" className="form-control" name="customer" placeholder="Enter customer company name" value={this.state.shipmentData.customer} onChange={this.handleInputChange} required />
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Haulier</h5>
-                                <input type="text" className="form-control-lg" name="haulier" placeholder="Enter haulier" value={this.state.shipmentData.haulier} onChange={this.handleInputChange} required />
+                                <h6>Haulier</h6>
+                                <input type="text" className="form-control" name="haulier" placeholder="Enter hauleir name" value={this.state.shipmentData.haulier} onChange={this.handleInputChange} required />
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Trailer</h5>
-                                <input type="text" className="form-control-lg" name="trailer" placeholder="Enter trailer nr" value={this.state.shipmentData.trailer} onChange={this.handleInputChange} required />
+                                <h6>Trailer</h6>
+                                <input type="text" className="form-control" name="trailer" placeholder="Enter trailer nr" value={this.state.shipmentData.trailer} onChange={this.handleInputChange} required />
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Loading Address</h5>
-                                <input type="text" className="form-control-lg" name="loading-address" placeholder="Enter loading address" value={this.state.shipmentData["loading-address"]} onChange={this.handleInputChange} required />
+                                <h6>Loading Address</h6>
+                                <input type="text" className="form-control" name="loading-address" placeholder="Enter loading address" value={this.state.shipmentData["loading-address"]} onChange={this.handleInputChange} required />
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Unloading Address</h5>
-                                <input type="text" className="form-control-lg" name="unloading-address" placeholder="Enter unloading address" value={this.state.shipmentData["unloading-address"]} onChange={this.handleInputChange} required />
+                                <h6>Unloading Address</h6>
+                                <input type="text" className="form-control" name="unloading-address" placeholder="Enter unloading address" value={this.state.shipmentData["unloading-address"]} onChange={this.handleInputChange} required />
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Delivery Date</h5>
-                                <input type="datetime-local" className="form-control-lg" name="delivery-date" value={this.state.shipmentData["delivery-date"]} onChange={this.handleInputChange} required />
+                                <h6>Delivery Date</h6>
+                                <input type="date" className="form-control" name="delivery-date" value={this.state.shipmentData["delivery-date"]} onChange={this.handleInputChange} required />
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Project ID</h5>
-                                <input type="number" className="form-control-lg" name="project-id" value={this.state.shipmentData["project-id"]} onChange={this.handleInputChange} required />
+                                <h6>Project ID</h6>
+                                <input type="number" className="form-control" name="project-id" value={this.state.shipmentData["project-id"]} onChange={this.handleInputChange} required />
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Shipment ID</h5>
-                                <input type="number" className="form-control-lg" name="shipment-id" value={this.state.shipmentData["shipment-id"]} onChange={this.handleInputChange} required />
+                                <h6>Shipment ID</h6>
+                                <input type="number" className="form-control" name="shipment-id" value={this.state.shipmentData["shipment-id"]} onChange={this.handleInputChange} required />
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Invoice Nr</h5>
-                                <input type="number" className="form-control-lg" name="inovice-nr" value={this.state.shipmentData["inovice-nr"]} onChange={this.handleInputChange} />
+                                <h6>Invoice Nr</h6>
+                                <input type="number" className="form-control" name="invoice-nr" value={this.state.shipmentData["invoice-nr"]} onChange={this.handleInputChange} />
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Invoice Amount</h5>
-                                <input type="number" className="form-control-lg" name="inovice-amount" value={this.state.shipmentData["inovice-amount"]} onChange={this.handleInputChange} />
+                                <h6>Invoice Amount</h6>
+                                <input type="number" className="form-control" name="invoice-amount" value={this.state.shipmentData["invoice-amount"]} onChange={this.handleInputChange} />
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Invoice Currency</h5>
-                                <select className="form-control-lg" name="inovice-currency" value={this.state.shipmentData["inovice-currency"]} onChange={this.handleInputChange}>
+                                <h6>Invoice Currency</h6>
+                                <select className="form-control" name="inovice-currency" value={this.state.shipmentData["inovice-currency"]} onChange={this.handleInputChange}>
                                     <option value='EUR'>EUR</option>
                                     <option value='SEK'>SEK</option>
                                     <option value='NOK'>NOK</option>
@@ -135,23 +167,60 @@ export default class CreateShipment extends Component {
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Project Resp. Person</h5>
-                                <input type="text" className="form-control-lg" name="project-resp" placeholder="Enter project responsible person" value={this.state.shipmentData["project-resp"]} onChange={this.handleInputChange} required/>
+                                <h6>Project Resp. Person</h6>
+                                <input type="text" className="form-control" name="project-resp" placeholder="Enter project responsible person" value={this.state.shipmentData["project-resp"]} onChange={this.handleInputChange} required/>
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Requested Date</h5>
-                                <input type="datetime-local" className="form-control-lg" name="requested-date" value={this.state.shipmentData["requested-date"]} onChange={this.handleInputChange} required />
+                                <h6>Requested Date</h6>
+                                <input type="date" className="form-control" name="requested-date" value={this.state.shipmentData["requested-date"]} onChange={this.handleInputChange} />
                             </label>
                         </div>
                         <div className="form-group">
                             <label>
-                                <h5>Status</h5>
-                                <select className="form-control-lg" name="status" multiple={true} value={this.state.shipmentData["documents-needed"]} onChange={this.handleInputChange} >
+                                <h6>Status</h6>
+                                <select className="form-control" name="status" value={this.state.shipmentData.status} onChange={this.handleInputChange} required >
                                     <option value='Need Documents'>Need Documents</option>
                                     <option value='Other'>Other</option>
                                 </select>
+                            </label>
+                        </div>
+                        <div className="form-group">
+                            <label>
+                                <h6>Documents needed</h6>
+                                <select className="form-control" name="documents-needed" multiple={true} value={this.state.shipmentData["documents-needed"]} onChange={this.handleInputChange} >
+                                    <option value='CMR'>CMR</option>
+                                    <option value='Original CMR'>Original CMR</option>
+                                    <option value='Delivery Note'>Delivery Note</option>
+                                    <option value='Original Delivery Note'>Original Delivery Note</option>
+                                    <option value='COP'>COP</option>
+                                    <option value='Other'>Other</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div className="form-group">
+                            <label>
+                                <h6>Received Date</h6>
+                                <input type="date" className="form-control" name="received-date" value={this.state.shipmentData["received-date"]} onChange={this.handleInputChange} />
+                            </label>
+                        </div>
+                        <div className="form-group">
+                            <label>
+                                <h6>Notes</h6>
+                                <input type="text" className="form-control" name="notes-internal" placeholder="Enter anything special here" value={this.state.shipmentData["notes-internal"]} onChange={this.handleInputChange} />
+                            </label>
+                        </div>
+                        <div className="form-group">
+                            <label>
+                                <h6>Reminder Date</h6>
+                                <input type="date" className="form-control" name="reminder-date" value={this.state.shipmentData["reminder-date"]} onChange={this.handleInputChange} />
+                            </label>
+                        </div>
+                        <div className="form-group">
+                            <label>
+                                <h6>Invoice Nr for Missing CMR</h6>
+                                <input type="text" className="form-control" name="invoice-nr-missing-CMR" value={this.state.shipmentData["invoice-nr-missing-CMR"]} onChange={this.handleInputChange} />
                             </label>
                         </div>
                         <button type="submit" className="btn btn-primary">Submit</button>

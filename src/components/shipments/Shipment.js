@@ -20,7 +20,7 @@ export default class Shipment extends Component {
                 <td>{this.props['status']}</td>
                 <td>{this.props['documents-needed'].join(', ')}</td>
                 <td>{this.props['received-date']}</td>
-                <td>{this.props['resp-person']}</td>
+                <td>{this.props._acl.creator}</td>
                 <td>{this.props['notes-internal']}</td>
                 <td>{this.props['reminder-date']}</td>
                 <td>{this.props['invoice-nr-missing-cmr']}</td>

@@ -7,7 +7,9 @@ import SocialLogIn from './SocialLogIn';
 import Navbar from './common/Navbar';
 import Shipments from './shipments/Shipments';
 import PrivateRoute from './common/PrivateRoute';
+import CreateShipment from './shipments/CreateShipment';
 import auth from '../utils/auth';
+import config from '../config/Config';
 
 class App extends Component {
   constructor(props) {
@@ -56,6 +58,7 @@ class App extends Component {
         <Route path="/signup" component={SignUp} />
         <Route path="/login" component={LogIn} />
         <PrivateRoute exact path="/shipments" component={Shipments} />
+        <PrivateRoute exact path="/createShipment" component={CreateShipment} />
         <Route path="/social-login" render={ (props) => <SocialLogIn {...props} userId={sessionStorage.userId}/> } />
       </div>
     );
