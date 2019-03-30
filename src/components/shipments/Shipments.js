@@ -55,6 +55,7 @@ class Shipments extends Component {
                                 <th scope="col">Notes</th>
                                 <th scope="col">Reminder Date</th>
                                 <th scope="col">Invoice Nr Missing CMR</th>
+                                <th scope="col">Modify</th>
                             </tr>
                         </thead>
                         <tbody>

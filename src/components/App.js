@@ -10,6 +10,7 @@ import PrivateRoute from './common/PrivateRoute';
 import CreateShipment from './shipments/CreateShipment';
 import auth from '../utils/auth';
 import config from '../config/Config';
+import ShipmentDetail from './shipments/ShipmentDetail';
 
 class App extends Component {
   constructor(props) {
@@ -59,6 +60,7 @@ class App extends Component {
         <Route path="/login" component={LogIn} />
         <PrivateRoute exact path="/shipments" component={Shipments} />
         <PrivateRoute exact path="/createShipment" component={CreateShipment} />
+        <PrivateRoute path="/shipments/:id" component={ShipmentDetail} />
         <Route path="/social-login" render={ (props) => <SocialLogIn {...props} userId={sessionStorage.userId}/> } />
       </div>
     );

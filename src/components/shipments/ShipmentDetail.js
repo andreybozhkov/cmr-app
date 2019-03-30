@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import config from '../../config/Config';
 
-export default class CreateShipment extends Component {
+export default class ShipmentDetail extends Component {
     constructor(props) {
         super(props);
 
@@ -66,13 +66,13 @@ export default class CreateShipment extends Component {
     }
 
     handleSubmit(event) {
-        this.createShipment();
+        this.editShipment();
         event.preventDefault();
     }
 
-    createShipment() {
-        fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/shipments`, {
-            method: 'POST',
+    editShipment() {
+        fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/shipments/${this.state.shipmentData._id}`, {
+            method: 'PUT',
             headers: {
                 'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`,
                 'Content-Type': 'application/json'
@@ -80,6 +80,19 @@ export default class CreateShipment extends Component {
             body: JSON.stringify(this.state.shipmentData)
         }).then((res) => {
             this.props.history.push("/shipments");
+        }).catch((err) => console.log(err));
+    }
+
+    componentDidMount() {
+        fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/shipments/${this.props.match.params.id}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
+            }
+        }).then((res) => {
+            res.json().then((resJSON) => {
+                this.setState({ shipmentData: {...resJSON} });
+            }).catch((err) => console.log(err));
         }).catch((err) => console.log(err));
     }
 

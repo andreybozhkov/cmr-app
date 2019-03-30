@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 export default class Shipment extends Component {
     render() {
@@ -24,6 +25,9 @@ export default class Shipment extends Component {
                 <td>{this.props['notes-internal']}</td>
                 <td>{this.props['reminder-date']}</td>
                 <td>{this.props['invoice-nr-missing-cmr']}</td>
+                <td>
+                    <Link to={`/shipments/${this.props['shipment-id']}`}>Open</Link>
+                </td>
             </tr>
         )
     }
