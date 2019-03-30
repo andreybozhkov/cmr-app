@@ -26,7 +26,7 @@ export default class CreateShipment extends Component {
                 'received-date': '',
                 'notes-internal': '',
                 'reminder-date': '',
-                'invoice-nr-missing-CMR': ''
+                'invoice-nr-missing-cmr': ''
             }
         }
 
@@ -78,7 +78,7 @@ export default class CreateShipment extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(this.state.shipmentData)
-        }).then((res) => {
+        }).then(() => {
             this.props.history.push("/shipments");
         }).catch((err) => console.log(err));
     }
@@ -217,7 +217,7 @@ export default class CreateShipment extends Component {
                         <div className="form-group">
                             <label>
                                 <h6>Invoice Nr for Missing CMR</h6>
-                                <input type="text" className="form-control" name="invoice-nr-missing-CMR" value={this.state.shipmentData["invoice-nr-missing-CMR"]} onChange={this.handleInputChange} />
+                                <input type="text" className="form-control" name="invoice-nr-missing-cmr" value={this.state.shipmentData["invoice-nr-missing-cmr"]} onChange={this.handleInputChange} />
                             </label>
                         </div>
                         <button type="submit" className="btn btn-primary">Submit</button>

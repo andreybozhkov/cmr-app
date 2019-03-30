@@ -17,7 +17,8 @@ class App extends Component {
     super(props);
     this.state = {
       userData: {
-        firstName: ''
+        firstName: '',
+        roles: []
       }
     };
 
@@ -34,7 +35,8 @@ class App extends Component {
         res.json().then((resJSON) => {
           this.setState({
             userData: {
-              firstName: resJSON.firstName
+              firstName: resJSON.firstName,
+              roles: resJSON.roles
             }
           });
         }).catch(err => console.log(err));
@@ -60,7 +62,7 @@ class App extends Component {
         <Route path="/login" component={LogIn} />
         <PrivateRoute exact path="/shipments" component={Shipments} />
         <PrivateRoute exact path="/createShipment" component={CreateShipment} />
-        <PrivateRoute path="/shipments/:id" component={ShipmentDetail} />
+        <PrivateRoute path="/shipments/:id" component={ShipmentDetail} userData={this.state.userData} />
         <Route path="/social-login" render={ (props) => <SocialLogIn {...props} userId={sessionStorage.userId}/> } />
       </div>
     );

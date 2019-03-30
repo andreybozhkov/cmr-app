@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import config from '../../config/Config';
+import auth from '../../utils/auth';
 
 export default class ShipmentDetail extends Component {
     constructor(props) {
@@ -26,12 +27,15 @@ export default class ShipmentDetail extends Component {
                 'received-date': '',
                 'notes-internal': '',
                 'reminder-date': '',
-                'invoice-nr-missing-CMR': ''
+                'invoice-nr-missing-cmr': ''
             }
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.deleteShipment = this.deleteShipment.bind(this);
+
+        this.isAdmin = auth.isAdmin.bind(this);
     }
 
     handleInputChange(event) {
@@ -78,9 +82,22 @@ export default class ShipmentDetail extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(this.state.shipmentData)
-        }).then((res) => {
+        }).then(() => {
             this.props.history.push("/shipments");
         }).catch((err) => console.log(err));
+    }
+
+    deleteShipment() {
+        if(this.props.userData.roles.includes('Admin')) {
+            fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/shipments/${this.state.shipmentData._id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
+                }
+            }).then((res) => {
+                this.props.history.push("/shipments");
+            }).catch(err => console.log(err));
+        }
     }
 
     componentDidMount() {
@@ -230,10 +247,13 @@ export default class ShipmentDetail extends Component {
                         <div className="form-group">
                             <label>
                                 <h6>Invoice Nr for Missing CMR</h6>
-                                <input type="text" className="form-control" name="invoice-nr-missing-CMR" value={this.state.shipmentData["invoice-nr-missing-CMR"]} onChange={this.handleInputChange} />
+                                <input type="text" className="form-control" name="invoice-nr-missing-cmr" value={this.state.shipmentData["invoice-nr-missing-cmr"]} onChange={this.handleInputChange} />
                             </label>
                         </div>
                         <button type="submit" className="btn btn-primary">Submit</button>
+                        {this.isAdmin(this.props.userData) &&
+                            <button className="btn btn-primary" onClick={this.deleteShipment}>Delete Shipment</button>
+                        }
                     </fieldset>
                 </form>
             </div>
