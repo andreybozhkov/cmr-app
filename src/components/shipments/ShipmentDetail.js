@@ -28,7 +28,8 @@ export default class ShipmentDetail extends Component {
                 'notes-internal': '',
                 'reminder-date': '',
                 'invoice-nr-missing-cmr': ''
-            }
+            },
+            hauliers: []
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -111,12 +112,25 @@ export default class ShipmentDetail extends Component {
                 this.setState({ shipmentData: {...resJSON} });
             }).catch((err) => console.log(err));
         }).catch((err) => console.log(err));
+
+        fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/hauliers`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
+            }
+        }).then(res =>
+            res.json().then(resJSON => {
+                this.setState({
+                    hauliers: resJSON
+                });
+            })
+        ).catch(err => console.log(err));
     }
 
     render() {
         return(
             <div className="container">
-                <h1>Create Shipment</h1>
+                <h1>Edit Shipment</h1>
                 <br/>
                 <form onSubmit={this.handleSubmit}>
                     <fieldset>
@@ -129,7 +143,13 @@ export default class ShipmentDetail extends Component {
                         <div className="form-group">
                             <label>
                                 <h6>Haulier</h6>
-                                <input type="text" className="form-control" name="haulier" placeholder="Enter hauleir name" value={this.state.shipmentData.haulier} onChange={this.handleInputChange} required />
+                                <select className="form-control" name="haulier" value={this.state.shipmentData.haulier} onChange={this.handleInputChange} required >
+                                    {
+                                        this.state.hauliers.map((haulier) => 
+                                            <option key={haulier._id} value={haulier._id}>{haulier.name}</option>
+                                        )
+                                    }
+                                </select>
                             </label>
                         </div>
                         <div className="form-group">

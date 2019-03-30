@@ -27,7 +27,8 @@ export default class CreateShipment extends Component {
                 'notes-internal': '',
                 'reminder-date': '',
                 'invoice-nr-missing-cmr': ''
-            }
+            },
+            hauliers: []
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -83,6 +84,21 @@ export default class CreateShipment extends Component {
         }).catch((err) => console.log(err));
     }
 
+    componentDidMount() {
+        fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/hauliers`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
+            }
+        }).then(res =>
+            res.json().then(resJSON => {
+                this.setState({
+                    hauliers: resJSON
+                });
+            })
+        ).catch(err => console.log(err));
+    }
+
     render() {
         return(
             <div className="container">
@@ -99,7 +115,13 @@ export default class CreateShipment extends Component {
                         <div className="form-group">
                             <label>
                                 <h6>Haulier</h6>
-                                <input type="text" className="form-control" name="haulier" placeholder="Enter hauleir name" value={this.state.shipmentData.haulier} onChange={this.handleInputChange} required />
+                                <select className="form-control" name="haulier" value={this.state.shipmentData.haulier} onChange={this.handleInputChange} required >
+                                    {
+                                        this.state.hauliers.map((haulier) => 
+                                            <option key={haulier._id} value={haulier._id}>{haulier.name}</option>
+                                        )
+                                    }
+                                </select>
                             </label>
                         </div>
                         <div className="form-group">

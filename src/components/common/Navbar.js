@@ -24,22 +24,23 @@ class Navbar extends Component {
     render() {
         return (
             <nav className="navbar navbar-dark bg-primary">
-            <Link className="navbar-brand" to="/">CMR-App. Welcome!</Link>
-            {!sessionStorage.getItem('authtoken') &&
-                <div className="my-2 my-sm-0">
-                    <Link className="btn btn-secondary my-2 my-sm-0" to="/signup">Sign Up</Link>
-                    <Link className="btn btn-secondary my-2 my-sm-0" to="/login">Log In</Link>
-                </div>
-            }
-            {sessionStorage.getItem('authtoken') &&
-                <div className="my-2 my-sm-0">
-                    <h4>Hello, {this.props.firstName}</h4>
-                    <Link className="btn btn-secondary my-2 my-sm-0" to="/shipments">Shipments</Link>
-                    <Link className="btn btn-secondary my-2 my-sm-0" to="/createShipment">Create Shipment</Link>
-                    <button className="btn btn-secondary my-2 my-sm-0" onClick={this.logout}>Log Out</button>
-                </div>
-            }
-        </nav>
+                <Link className="navbar-brand" to="/">CMR-App. Welcome!</Link>
+                {!sessionStorage.getItem('authtoken') &&
+                    <div className="my-2 my-sm-0">
+                        <Link className="btn btn-secondary my-2 my-sm-0" to="/signup">Sign Up</Link>
+                        <Link className="btn btn-secondary my-2 my-sm-0" to="/login">Log In</Link>
+                    </div>
+                }
+                {sessionStorage.getItem('authtoken') &&
+                    <div className="my-2 my-sm-0">
+                        <h4>Hello, {this.props.firstName}</h4>
+                        <Link className="btn btn-secondary my-2 my-sm-0" to="/shipments">Shipments</Link>
+                        <Link className="btn btn-secondary my-2 my-sm-0" to="/createShipment">Create Shipment</Link>
+                        <Link className="btn btn-secondary my-2 my-sm-0" to="/createHaulier">Create Haulier</Link>
+                        <button className="btn btn-secondary my-2 my-sm-0" onClick={this.logout}>Log Out</button>
+                    </div>
+                }
+            </nav>
         )
     }
 }
