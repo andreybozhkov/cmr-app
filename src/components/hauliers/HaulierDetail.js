@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import config from '../../config/Config';
+import auth from '../../utils/auth';
 
-export default class CreateHaulier extends Component {
+export default class HaulierDetail extends Component {
     constructor(props) {
         super(props);
 
@@ -17,6 +18,9 @@ export default class CreateHaulier extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.addEmail = this.addEmail.bind(this);
         this.removeEmail = this.removeEmail.bind(this);
+
+        this.isAdmin = auth.isAdmin.bind(this);
+        this.deleteHaulier = this.deleteHaulier.bind(this);
     }
 
     handleInputChange(event) {
@@ -40,13 +44,13 @@ export default class CreateHaulier extends Component {
     }
 
     handleSubmit(event) {
-        this.createHaulier();
+        this.editHaulier();
         event.preventDefault();
     }
 
-    createHaulier() {
-        fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/hauliers`, {
-            method: 'POST',
+    editHaulier() {
+        fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/hauliers/${this.props.match.params.id}`, {
+            method: 'PUT',
             headers: {
                 'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`,
                 'Content-Type': 'application/json'
@@ -86,10 +90,36 @@ export default class CreateHaulier extends Component {
         event.preventDefault();
     }
 
+    deleteHaulier() {
+        if(this.props.userData.roles.includes('Admin')) {
+            fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/hauliers/${this.props.match.params.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
+                }
+            }).then((res) => {
+                this.props.history.push("/hauliers");
+            }).catch(err => console.log(err));
+        }
+    }
+
+    componentDidMount() {
+        fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/hauliers/${this.props.match.params.id}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
+            }
+        }).then((res) => {
+            res.json().then((resJSON) => {
+                this.setState({ haulierData: {...resJSON} });
+            }).catch((err) => console.log(err));
+        }).catch((err) => console.log(err));
+    }
+
     render() {
         return(
             <div className="container">
-                <h1>Create Haulier</h1>
+                <h1>Edit Haulier</h1>
                 <br/>
                 <form onSubmit={this.handleSubmit}>
                     <fieldset>
@@ -115,6 +145,9 @@ export default class CreateHaulier extends Component {
                                 }
                             </ul>
                         <button type="submit" className="btn btn-primary">Submit</button>
+                        {this.isAdmin(this.props.userData) &&
+                            <button type="button" className="btn btn-primary" onClick={this.deleteHaulier}>Delete Haulier</button>
+                        }
                     </fieldset>
                 </form>
             </div>

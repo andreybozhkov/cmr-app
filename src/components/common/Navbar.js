@@ -36,6 +36,7 @@ class Navbar extends Component {
                         <h4>Hello, {this.props.firstName}</h4>
                         <Link className="btn btn-secondary my-2 my-sm-0" to="/shipments">Shipments</Link>
                         <Link className="btn btn-secondary my-2 my-sm-0" to="/createShipment">Create Shipment</Link>
+                        <Link className="btn btn-secondary my-2 my-sm-0" to="/hauliers">Hauliers</Link>
                         <Link className="btn btn-secondary my-2 my-sm-0" to="/createHaulier">Create Haulier</Link>
                         <button className="btn btn-secondary my-2 my-sm-0" onClick={this.logout}>Log Out</button>
                     </div>

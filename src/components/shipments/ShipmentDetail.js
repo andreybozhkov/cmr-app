@@ -272,7 +272,7 @@ export default class ShipmentDetail extends Component {
                         </div>
                         <button type="submit" className="btn btn-primary">Submit</button>
                         {this.isAdmin(this.props.userData) &&
-                            <button className="btn btn-primary" onClick={this.deleteShipment}>Delete Shipment</button>
+                            <button type="button" className="btn btn-primary" onClick={this.deleteShipment}>Delete Shipment</button>
                         }
                     </fieldset>
                 </form>

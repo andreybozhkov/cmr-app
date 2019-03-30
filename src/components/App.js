@@ -12,6 +12,8 @@ import auth from '../utils/auth';
 import config from '../config/Config';
 import ShipmentDetail from './shipments/ShipmentDetail';
 import CreateHaulier from './hauliers/CreateHaulier';
+import HaulierDetail from './hauliers/HaulierDetail';
+import Hauliers from './hauliers/Hauliers';
 
 class App extends Component {
   constructor(props) {
@@ -63,8 +65,10 @@ class App extends Component {
         <Route path="/login" component={LogIn} />
         <PrivateRoute exact path="/shipments" component={Shipments} />
         <PrivateRoute exact path="/createShipment" component={CreateShipment} />
-        <PrivateRoute path="/shipments/:id" component={ShipmentDetail} userData={this.state.userData} />
-        <PrivateRoute path="/createHaulier" component={CreateHaulier} />
+        <PrivateRoute exact path="/shipments/:id" component={ShipmentDetail} userData={this.state.userData} />
+        <PrivateRoute exact path="/hauliers" component={Hauliers} />
+        <PrivateRoute exact path="/createHaulier" component={CreateHaulier} />
+        <PrivateRoute exact path="/hauliers/:id" component={HaulierDetail} userData={this.state.userData} />
         <Route path="/social-login" render={ (props) => <SocialLogIn {...props} userId={sessionStorage.userId}/> } />
       </div>
     );
