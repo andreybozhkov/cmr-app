@@ -60,8 +60,9 @@ class Shipments extends Component {
                         </thead>
                         <tbody>
                             {
-                                this.state.shipments.map((shipment) => 
-                                    <Shipment key={shipment._id} {...shipment} />
+                                this.state.shipments.sort( (a, b) => Date.parse(b._kmd.ect) - Date.parse(a._kmd.ect))
+                                                    .map((shipment) => 
+                                                    <Shipment key={shipment._id} {...shipment} />
                                 )
                             }
                         </tbody>
