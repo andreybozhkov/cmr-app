@@ -27,7 +27,7 @@ class Shipments extends Component {
                     if (!haulierIDs.includes(shipment.haulier.toString())) haulierIDs.push(shipment.haulier.toString());
                 }
 
-                let promises = [];
+                let promisesHauliers = [];
                 for (let haulierID of haulierIDs) {
                     let singleFetch = fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/hauliers/${haulierID}`, {
                         method: 'GET',
@@ -35,14 +35,29 @@ class Shipments extends Component {
                             'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
                         }
                     })
-                    promises.push(singleFetch);
+                    promisesHauliers.push(singleFetch);
                 }
+
+                Promise.all(promisesHauliers).then((res) => {
+                    let resPromises = res.map((r) => r.json());
+                    Promise.all(resPromises).then((res) => {
+                        for (let shipment of shipments) {
+                            shipment.haulier = res.find((e) => {
+                                return e._id === shipment.haulier;
+                            }).name;
+                        }
+                        this.setState({
+                            shipments: shipments
+                        });
+                    }).catch((err) => console.log(err));
+                }).catch((err) => console.log(err));
 
                 let userIDs = [];
                 for (let shipment of resJSON) {
                     if (!userIDs.includes(shipment._acl.creator)) userIDs.push(shipment._acl.creator);
                 }
 
+                let promisesUsers = [];
                 for (let userID of userIDs) {
                     let singleFetch = fetch(`https://baas.kinvey.com/user/${config.kinveyAppKey}/${userID}`, {
                         method: 'GET',
@@ -50,19 +65,16 @@ class Shipments extends Component {
                             'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
                         }
                     })
-                    promises.push(singleFetch);
+                    promisesUsers.push(singleFetch);
                 }
 
-                Promise.all(promises).then((res) => {
+                Promise.all(promisesUsers).then((res) => {
                     let resPromises = res.map((r) => r.json());
                     Promise.all(resPromises).then((res) => {
                         for (let shipment of shipments) {
-                            shipment.haulier = res.find((e) => {
-                                return e._id === shipment.haulier
-                            }).name;
-                            shipment['resp-person'] = res.find((e) => {
-                                return e._id === shipment.haulier
-                            }).name;
+                            shipment._acl.creator = res.find((e) => {
+                                return e._id === shipment._acl.creator;
+                            }).firstName;
                         }
                         this.setState({
                             shipments: shipments
