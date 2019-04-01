@@ -6,7 +6,9 @@ class Shipments extends Component {
     constructor(props){
         super(props);
         this.state = {
-            shipments: []
+            shipments: [],
+            hauliers: [],
+            users: []
         }
     }
 
@@ -18,9 +20,56 @@ class Shipments extends Component {
             }
         }).then(res =>
             res.json().then(resJSON => {
-                this.setState({
-                    shipments: resJSON
-                });
+                let shipments = resJSON;
+
+                let haulierIDs = [];
+                for (let shipment of resJSON) {
+                    if (!haulierIDs.includes(shipment.haulier.toString())) haulierIDs.push(shipment.haulier.toString());
+                }
+
+                let promises = [];
+                for (let haulierID of haulierIDs) {
+                    let singleFetch = fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/hauliers/${haulierID}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
+                        }
+                    })
+                    promises.push(singleFetch);
+                }
+
+                let userIDs = [];
+                for (let shipment of resJSON) {
+                    if (!userIDs.includes(shipment._acl.creator)) userIDs.push(shipment._acl.creator);
+                }
+
+                for (let userID of userIDs) {
+                    let singleFetch = fetch(`https://baas.kinvey.com/user/${config.kinveyAppKey}/${userID}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
+                        }
+                    })
+                    promises.push(singleFetch);
+                }
+
+                Promise.all(promises).then((res) => {
+                    let resPromises = res.map((r) => r.json());
+                    Promise.all(resPromises).then((res) => {
+                        for (let shipment of shipments) {
+                            shipment.haulier = res.find((e) => {
+                                return e._id === shipment.haulier
+                            }).name;
+                            shipment['resp-person'] = res.find((e) => {
+                                return e._id === shipment.haulier
+                            }).name;
+                        }
+                        this.setState({
+                            shipments: shipments
+                        });
+                    }).catch((err) => console.log(err));
+                }).catch((err) => console.log(err));
+
             })
         ).catch(err => console.log(err));
     }
