@@ -22,7 +22,7 @@ class Shipments extends Component {
 
                 let haulierIDs = [];
                 for (let shipment of resJSON) {
-                    if (!haulierIDs.includes(shipment.haulier.toString())) haulierIDs.push(shipment.haulier.toString());
+                    if (!haulierIDs.includes(shipment.haulier)) haulierIDs.push(shipment.haulier);
                 }
 
                 let promisesHauliers = [];
