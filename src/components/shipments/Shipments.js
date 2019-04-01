@@ -6,9 +6,7 @@ class Shipments extends Component {
     constructor(props){
         super(props);
         this.state = {
-            shipments: [],
-            hauliers: [],
-            users: []
+            shipments: []
         }
     }
 
