@@ -228,7 +228,7 @@ export default class ShipmentDetail extends Component {
                                 <h6>Status</h6>
                                 <select className="form-control" name="status" value={this.state.shipmentData.status} onChange={this.handleInputChange} required >
                                     <option value='Need Documents'>Need Documents</option>
-                                    <option value='Need Documents'>Done</option>
+                                    <option value='Done'>Done</option>
                                     <option value='Other'>Other</option>
                                 </select>
                             </label>

@@ -91,6 +91,7 @@ class Shipments extends Component {
                     <h3>There are no shipments to work with!</h3>
                 }
                 {this.state.shipments.length > 0 &&
+                <div>
                     <table className="table table-hover table-responsive">
                         <thead>
                             <tr>
@@ -125,7 +126,8 @@ class Shipments extends Component {
                                 )
                             }
                         </tbody>
-                </table>
+                    </table>
+                </div>
                 }
             </div>
         )
