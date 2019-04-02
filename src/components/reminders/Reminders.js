@@ -20,40 +20,48 @@ export default class Reminders extends Component {
             res.json().then((resJSON) => {
                 let shipmentsMissingDocs = resJSON;
 
-                let haulierIDs = [];
+                let hauliersMissingDocs = [];
+                let promisesHauliers = [];
                 for (let shipment of shipmentsMissingDocs) {
-                    if (!haulierIDs.includes(shipment.haulier)) {
-                        haulierIDs.push(shipment.haulier);
+                    if (hauliersMissingDocs.findIndex((element) => {
+                        return element.id === shipment.haulier;
+                    }) === -1) {
+                        let singleHaulier = {
+                            id: shipment.haulier,
+                            name: '',
+                            shipments: [{ ...shipment }]
+                        };
+                        hauliersMissingDocs.push(singleHaulier);
+                        
+                        let singleFetch = fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/hauliers/${shipment.haulier}`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
+                            }
+                        })
+                        promisesHauliers.push(singleFetch);
+
+                    } else if (hauliersMissingDocs.findIndex((element) => {
+                        return element.id === shipment.haulier;
+                    }) >= 0) {
+                        hauliersMissingDocs[hauliersMissingDocs.findIndex((element) => {
+                            return element.id === shipment.haulier;
+                        })].shipments.push({ ...shipment });
                     }
                 }
 
-                /*let promisesHauliers = [];
-                for (let haulierID of haulierIDs) {
-                    let singleFetch = fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/hauliers/${haulierID}`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Kinvey ${sessionStorage.getItem('authtoken')}`
-                        }
-                    })
-                    promisesHauliers.push(singleFetch);
-                }
-
-                let hauliersMissingDocs = [];
                 Promise.all(promisesHauliers).then((res) => {
                     let resPromises = res.map((r) => r.json());
                     Promise.all(resPromises).then((res) => {
-                        let hauliersRes = res;
-                        for (let haulier of hauliersRes) {
-                            let singleHaulier = {};
-                            singleHaulier.id = haulier._id;
-                            singleHaulier.name = haulier.name;
-                            singleHaulier.missingDocs = [];
-                            for (let shipment of shipmentsMissingDocs) {
-                                if 
-                            }
+                        for (let haulier of hauliersMissingDocs) {
+                            haulier.name = res.find((e) => {
+                                return e._id === haulier.id
+                            }).name;
                         }
+
+                        this.setState({ hauliersMissingDocs: hauliersMissingDocs });
                     }).catch((err) => console.log(err));
-                }).catch((err) => console.log(err));*/
+                }).catch((err) => console.log(err));
             }).catch((err) => console.log(err));
         }).catch((err) => console.log(err));
     }
@@ -77,7 +85,7 @@ export default class Reminders extends Component {
                         <tbody>
                             {
                                 this.state.hauliersMissingDocs.map((haulierMissing) => 
-                                    <HaulierMissing key={haulierMissing._id} {...haulierMissing} />
+                                    <HaulierMissing key={haulierMissing.id} {...haulierMissing} />
                                 )
                             }
                         </tbody>
