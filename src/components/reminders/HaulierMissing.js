@@ -8,7 +8,7 @@ export default class HaulierMissing extends Component {
                 <td>{this.props.name}</td>
                 <td>{this.props.shipments.length}</td>
                 <td>
-                    <Link to={`/remindersList/${this.props._id}`}>List</Link>
+                    <Link to={`/reminders/${this.props._id}`}>List</Link>
                 </td>
             </tr>
         )

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import config from '../../config/Config';
 import HaulierMissing from './HaulierMissing';
+import PrivateRoute from '../common/PrivateRoute';
+import ShipmentsReminders from '../reminders/ShipmentsReminders';
 
 export default class Reminders extends Component {
     constructor(props){
@@ -90,17 +92,10 @@ export default class Reminders extends Component {
                             }
                         </tbody>
                     </table>
+                    <PrivateRoute path={"/reminders/:id"} component={ShipmentsReminders} />
                 </div>
                 }
             </div>
         )
     }
 }
-
-/*
-{
-                                this.state.hauliersMissingDocs.map((haulier) => 
-                                                    <HaulierMissing key={haulier._id} {...haulier} />
-                                )
-                            }
-*/
