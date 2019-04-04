@@ -1,7 +1,18 @@
 import React, { Component } from 'react';
 import Shipment from '../shipments/Shipment';
+import sendReminder from './sendReminder';
 
 export default class ShipmentsReminders extends Component {
+    constructor(props) {
+        super(props);
+
+        this.sendReminder = this.sendReminder.bind(this);
+    }
+
+    sendReminder() {
+        sendReminder(this.props.haulierData.shipments);
+    }
+
     render() {
         return(
             <div>
@@ -11,6 +22,9 @@ export default class ShipmentsReminders extends Component {
                 {this.props.haulierData.shipments.length > 0 &&
                     <div>
                         <h4>Missing Documents for Haulier: {this.props.haulierData.name}</h4>
+                        {sessionStorage.getItem('access_token_graph') &&
+                            <button type="button" className="btn btn-primary" onClick={this.sendReminder}>Send Reminder</button>
+                        }
                         <table className="table table-hover table-responsive">
                             <thead>
                                 <tr>

@@ -3,7 +3,6 @@ import '../styles/bootstrap.min.css';
 import { Route } from 'react-router-dom';
 import SignUp from './user/SignUp';
 import LogIn from './user/LogIn';
-import SocialLogIn from './SocialLogIn';
 import Navbar from './common/Navbar';
 import Shipments from './shipments/Shipments';
 import PrivateRoute from './common/PrivateRoute';
@@ -71,7 +70,6 @@ class App extends Component {
         <PrivateRoute exact path="/createHaulier" component={CreateHaulier} />
         <PrivateRoute exact path="/hauliers/:id" component={HaulierDetail} userData={this.state.userData} />
         <PrivateRoute path="/reminders" component={Reminders} />
-        <Route path="/social-login" render={ (props) => <SocialLogIn {...props} userId={sessionStorage.userId}/> } />
       </div>
     );
   }

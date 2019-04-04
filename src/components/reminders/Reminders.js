@@ -10,9 +10,21 @@ export default class Reminders extends Component {
         this.state = {
             hauliersMissingDocs: []
         };
+
+        this.handleImplicitToken = this.handleImplicitToken.bind(this);
+    }
+
+    handleImplicitToken() {
+        window.open('https://login.microsoftonline.com/b01aab02-d012-43b9-98de-902903e53920/oauth2/v2.0/authorize?client_id=55647bde-885a-40bc-8744-e9d7630d9302&scope=openid%20profile%20email%20User.Read%20Mail.ReadWrite%20Mail.Send&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Freminders&response_type=token', '_self');
     }
 
     componentDidMount() {
+        let parsedUrl = new URL(window.location.href);
+        let access_token = parsedUrl.hash.slice(parsedUrl.hash.indexOf("=") + 1, parsedUrl.hash.indexOf("&"));
+        if (access_token != null && access_token.length > 0) {
+            sessionStorage.setItem('access_token_graph', access_token);
+        }
+
         fetch(`https://baas.kinvey.com/appdata/${config.kinveyAppKey}/shipments?query={"status":"Need%20Documents"}`, {
             method: 'GET',
             headers: {
@@ -92,6 +104,9 @@ export default class Reminders extends Component {
                             }
                         </tbody>
                     </table>
+                    {!sessionStorage.getItem('access_token_graph') &&
+                            <button className="btn btn-primary" onClick={this.handleImplicitToken}>Implicit Log In</button>
+                        }
                     {this.props.location.state &&
                         <PrivateRoute exact path={"/reminders/:id"} component={ShipmentsReminders} haulierData={this.state.hauliersMissingDocs.find(haulier => haulier.id === this.props.location.state.currentHaulierIndex)} />
                     }
