@@ -9,7 +9,7 @@ export default class Reminders extends Component {
         super(props);
         this.state = {
             hauliersMissingDocs: []
-        }
+        };
     }
 
     componentDidMount() {
@@ -92,7 +92,9 @@ export default class Reminders extends Component {
                             }
                         </tbody>
                     </table>
-                    <PrivateRoute path={"/reminders/:id"} component={ShipmentsReminders} />
+                    {this.props.location.state &&
+                        <PrivateRoute exact path={"/reminders/:id"} component={ShipmentsReminders} haulierData={this.state.hauliersMissingDocs.find(haulier => haulier.id === this.props.location.state.currentHaulierIndex)} />
+                    }
                 </div>
                 }
             </div>
