@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ReminderShipmentsTable from './ReminderShipmentsTable';
-import ReactDOMServer from 'react-dom/server';
 
 export default class ShipmentsReminders extends Component {
     constructor(props) {
@@ -10,10 +9,9 @@ export default class ShipmentsReminders extends Component {
     }
 
     sendReminder() {
-        let body = document.getElementById("tableShipments");
-        console.log(body.toString());
+        let body = '<table>' + document.getElementById("tableShipments").innerHTML + '</table>';
 
-        /*fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
+        fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
             method: 'POST',
             headers: {
                 'Authorization': sessionStorage.getItem('access_token_graph'),
@@ -35,7 +33,7 @@ export default class ShipmentsReminders extends Component {
                     ]
                 }
             })
-        }).then((res) => console.log(res)).catch((err) => console.log(err));*/
+        }).then((res) => console.log(res)).catch((err) => console.log(err));
     }
 
     render() {
