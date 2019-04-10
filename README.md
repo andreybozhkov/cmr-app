@@ -25,3 +25,7 @@ Private (User) Part (protected with custom private routes):
 
 Administrator Part:
 - Ability to delete shipments and hauliers.
+
+Made for JS Web module, ReactJS Fundamentals course at SoftUni.
+
+SoftUni username: andreybozhkov
