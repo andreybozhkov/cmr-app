@@ -9,7 +9,35 @@ export default class ShipmentsReminders extends Component {
     }
 
     sendReminder() {
-        let body = '<table>' + document.getElementById("tableShipments").innerHTML + '</table>';
+        let tableDoc = document.getElementById("tableShipments");
+        let tableHead = '<thead>';
+        let tableBody = '<tbody>';
+        let columnIndices = [1,2,3,4,5,6,12,13];
+        for (let i = 0; i < tableDoc.rows.length; i++) {
+            let row = '<tr>';
+            for (let a = 0; a < tableDoc.rows[i].cells.length; a++) {
+                if (columnIndices.includes(a)) {
+                    if (i === 0) {
+                        row += `<th>${tableDoc.rows[i].cells[a].innerHTML}</th>`;
+                    } else {
+                        row += `<td>${tableDoc.rows[i].cells[a].innerHTML}</td>`;    
+                    }
+                }
+                if (a === columnIndices[columnIndices.length - 1]) {
+                    if (i === 0) {
+                        row += `</tr></thead>`;
+                    } else {
+                        row += `</tr>`;
+                        if (i === tableDoc.rows.length - 1) {
+                            row += `</tbody>`;
+                        }
+                    }
+                }
+            }
+            tableBody += row;
+        }
+
+        let mailBody = `<table>${tableHead}${tableBody}</table>`;
 
         fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
             method: 'POST',
@@ -22,7 +50,7 @@ export default class ShipmentsReminders extends Component {
                     'subject': 'Missing CMRs Reminder',
                     'body': {
                         'contentType': 'HTML',
-                        'content': `Hello,<br/>Please see below list of missing documents:<br/>${body}`
+                        'content': `Hello,<br/>Please see below list of missing documents:<br/>${mailBody}`
                     },
                     'toRecipients': [
                         {
