@@ -5,7 +5,7 @@ This is a Single Page Application (SPA) built with ReactJS library and Kinvey ba
 Major application sections are navigated to mostly using the navbar at the top of the page and rendered using React Router Library.
 
 Public Part:
-- Application starge page
+- Application start page
 - Sign-Up page - special note: admin priviliges for the moment must be granted on the back-end. Admin creation can be added at later stage.
 - Log-In page
 
