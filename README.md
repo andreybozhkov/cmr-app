@@ -16,6 +16,7 @@ Private (User) Part (protected with custom private routes):
         - Possibility to edit and delete. All users can edit. Only admins can delete. User role (all users vs admin) is enforced on front-end with array of roles and on back-end.
     - Shipment creation. All users can create shipments.
 - Hauliers:
+    - Hauliers list
     - Haulier details
         - Possibility to edit and delete. All users can edit. Only admins can delete. User role (all users vs admin) is enforced on front-end with array of roles and on back-end.
     - Haulier creation. All users can create hauliers.
