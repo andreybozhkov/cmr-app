@@ -1,4 +1,4 @@
-CMR requests tracking and automation for a freight forwarding company.
+Document requests tracking and automation for a freight forwarding company.
 
 This is a Single Page Application (SPA) built with ReactJS library and Kinvey back-end.
 
